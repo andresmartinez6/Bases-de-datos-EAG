@@ -25,7 +25,7 @@ end;
 
 
 /*2. Crear un bloque que muestre por pantalla todos los trabajos que hayan
-empezado hace 3 días.*/
+empezado hace 3 dï¿½as.*/
 declare
     hoy date:=sysdate-3;
     cadena_fecha varchar2(25):=to_char(hoy,'DD/MM/YYYY');
@@ -89,8 +89,8 @@ exec proc1('04/05/2023');
 
 
 /*4. Escribir un bloque PL/SQL que muestre por pantalla todos los datos de
-los jardineros. Tener en cuenta que, si el salario está a null, se deberá
-mostrar un 0 en vez de NULL. Nota: utilizar la función NVL.*/
+los jardineros. Tener en cuenta que, si el salario estï¿½ a null, se deberï¿½
+mostrar un 0 en vez de NULL. Nota: utilizar la funciï¿½n NVL.*/
 
 declare
     cursor datos is select jardinero.*,nvl(jardinero.salario,0) sr
@@ -111,11 +111,11 @@ begin
 end;
 
 
-/*5. Crear un procedimiento almacenado que reciba como parámetro el
-nombre de un jardinero. El procedimiento devolverá el total del sueldo
-que habrá que pagarle al jardinero, teniendo en cuenta que por cada día
-trabajado se le pagarán 6,5€ además de su salario. NOTA: el número
-devuelto no podrá llevar decimales.*/
+/*5. Crear un procedimiento almacenado que reciba como parï¿½metro el
+nombre de un jardinero. El procedimiento devolverï¿½ el total del sueldo
+que habrï¿½ que pagarle al jardinero, teniendo en cuenta que por cada dï¿½a
+trabajado se le pagarï¿½n 6,5ï¿½ ademï¿½s de su salario. NOTA: el nï¿½mero
+devuelto no podrï¿½ llevar decimales.*/
 
 create or replace procedure proc2(nom in varchar2) is 
         sld number:=0; 
@@ -142,8 +142,8 @@ exec proc2('Juan');
 
 
 /*6. Crear un bloque PL/SQL que reciba un nuevo nombre para una
-plantación.El bloque deberá indicar si el nombre cabe en la tabla o no.
-Tener en cuenta que el nombre de las plantaciones está creado como
+plantaciï¿½n.El bloque deberï¿½ indicar si el nombre cabe en la tabla o no.
+Tener en cuenta que el nombre de las plantaciones estï¿½ creado como
 varchar2(10).*/
 
 accept nom1 prompt 'Introduce el nombre:'
@@ -161,41 +161,52 @@ end;
 
 
 /*7. Crear un procedimiento almacenado que reciba una fecha y un nombre
-de mes. El procedimiento deberá devolver un ‘SI’ o un ‘NO’ dependiendo
+de mes. El procedimiento deberï¿½ devolver un ï¿½SIï¿½ o un ï¿½NOï¿½ dependiendo
 de si la fecha pertenece al mes indicado.*/
 
 create or replace procedure proc3(fe in date,n_mes in varchar2,cd out varchar2)is
+    mensaje varchar2;
 begin
-    cd:=trim(to_char(fe,'month'));
-    if(fe=cd)then
-        dbms_output.put_line('La fecha si pertenece al mes indicado');
+    mensaje:=trim(to_char(fe,'month'));
+    if(fe=mensaje)then
+        cd:='SI';
     else
-        dbms_output.put_line('La fecha no pertenece al mes indicado');
+        cd:='NO';
     end if;
 end proc3;
 
 
 /*8. Crear un bloque PL/SQL que reciba el nombre de un mes y muestre la
 siguiente salida: (reutilizar el procedimiento del ejercicio 7)
-Jardinero Plantación De <nombre mes>
-<nombreJardinero> <nombrePlantacion> Sí o no pertenece
-<nombreJardinero> <nombrePlantacion> Sí o no pertenece
-<nombreJardinero> <nombrePlantacion> Sí o no pertenece*/
+Jardinero Plantaciï¿½n De <nombre mes>
+<nombreJardinero> <nombrePlantacion> Sï¿½ o no pertenece
+<nombreJardinero> <nombrePlantacion> Sï¿½ o no pertenece
+<nombreJardinero> <nombrePlantacion> Sï¿½ o no pertenece*/
 
-create or replace procedure proc4(fe in date,n_mes in varchar2,cd out varchar2)is
+accept n_mes prompt 'Introduce el nombre del mes:'
 declare
-    cursor datos is select jardinero.*
-                        from jardinero;
-    fila_datos datos%rowtype;
-    resultado varchar2(20);
+    cursor datos is select jardinero.nombre,plantacion.nombre pr,trabajos.fecha_inicio
+                        from jardinero,plantacion,trabajos
+                        where jardinero.dni=trabajos.jardinero and
+                        trabajos.plantacion=plantacion.codigo;
+    condicional varchar2(50);
+    fila_datos datos&rowtype;
 begin
-    cd:=trim(to_char(fe,'month'));
-    if(fe=cd)then
-        dbms_output.put_line('La fecha si pertenece al mes indicado');
-    else
-        dbms_output.put_line('La fecha no pertenece al mes indicado');
-    end if;
-end proc4;
+    open datos;
+    fetch datos into fila_datos;
+    dbms_output.put_line('Jardinero plantacion de : &mes');
+    while(datos%found)loop
+
+        proc3(fila_datos.fecha_inicio,'&n_mes',condicional);
+
+        dbms_output.put_line('Nombre jardinero:'||fila_datos.nombre);
+        dbms_output.put_line('Nombre plantacion:'||fila_datos.pr);
+        dbms_output.put_line(condicional||' pertenece');
+
+        fetch datos into fila_datos;
+    end loop;
+    close datos;
+end;
 
 
 /*9. Escribir un procedimiento almacenado que reciba una fecha y devuelva
@@ -204,7 +215,7 @@ el nombre del mes al que pertenece dicha fecha.*/
 
 
 /*10.Escribir un bloque PL/SQL que muestre la siguiente salida:
-Jardinero Plantación Mes.
+Jardinero Plantaciï¿½n Mes.
 <nombreJardinero> <nombrePlantacion> <nombre mes>
 <nombreJardinero> <nombrePlantacion> <nombre mes>
 <nombreJardinero> <nombrePlantacion> <nombre mes>*/
@@ -212,17 +223,17 @@ Jardinero Plantación Mes.
 
 
 /*11.Escribir un procedimiento almacenado que reciba una fecha y devuelva
-el día de la semana a la que corresponde esa fecha.
-Independientemente del idioma del sistema deberá devolver el día en
-español.*/
+el dï¿½a de la semana a la que corresponde esa fecha.
+Independientemente del idioma del sistema deberï¿½ devolver el dï¿½a en
+espaï¿½ol.*/
 
 
 
 /*12.Escribir un procedimiento almacenado que reciba el nombre de una
-plantación y que muestre una salida como la siguiente:
-En la plantación <nombre_plantacion> se han hecho los siguientes
+plantaciï¿½n y que muestre una salida como la siguiente:
+En la plantaciï¿½n <nombre_plantacion> se han hecho los siguientes
 trabajos:
-1 <dia_semana><fecha_inicio> durante <días>
-2 <dia_semana><fecha_inicio> durante <días>
-3 …
+1 <dia_semana><fecha_inicio> durante <dï¿½as>
+2 <dia_semana><fecha_inicio> durante <dï¿½as>
+3 ï¿½
 En total se han trabajado <total_dias>*/
